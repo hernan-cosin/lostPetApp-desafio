@@ -1,0 +1,6 @@
+node_modules
+.env
+fe-src
+be-src
+.parcel-cache
+dist
