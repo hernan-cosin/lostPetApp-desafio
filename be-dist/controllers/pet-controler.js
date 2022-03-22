@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPet = void 0;
+exports.petsNearLocation = exports.updatePet = exports.createPet = void 0;
 const models_1 = require("../models/models");
 const cloudinary_1 = require("../lib/cloudinary");
 const algolia_1 = require("../lib/algolia");
@@ -47,3 +47,56 @@ async function createPet(petData, userId) {
     }
 }
 exports.createPet = createPet;
+async function updatePet(petInfo) {
+    try {
+        // CLOUDINARY
+        const imgUpload = await cloudinary_1.cloudinary.uploader.upload(petInfo.imgUrl, function (error, result) { });
+        petInfo.imgUrl = imgUpload.url;
+        // SEQUELIZE
+        const updatePet = await models_1.Pet.update(petInfo, {
+            where: { id: petInfo.petId },
+        });
+        // ALGOLIA
+        const algoliaUpdate = await algolia_1.index.partialUpdateObject({
+            objectID: petInfo.petId,
+            name: petInfo.petName,
+            _geoloc: {
+                lat: petInfo.loc_lat,
+                lng: petInfo.loc_lng,
+            },
+        });
+        return { updated: true };
+    }
+    catch (e) {
+        console.log(e);
+        return { updated: false };
+    }
+}
+exports.updatePet = updatePet;
+async function petsNearLocation(info) {
+    try {
+        const lat = info.query.lat;
+        const lng = info.query.lng;
+        const location = `${lat + "," + lng}`;
+        console.log("LATLNG", location);
+        const pets = algolia_1.index
+            .search("", {
+            aroundLatLng: location,
+            aroundRadius: 1000,
+        })
+            .then(async ({ hits }) => {
+            // SEQUELIZE
+            let petFromSequelize = [];
+            for (const pet of hits) {
+                const foundPet = await models_1.Pet.findOne({ where: { id: pet.objectID } });
+                petFromSequelize.push(foundPet);
+            }
+            return petFromSequelize;
+        });
+        return pets;
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+exports.petsNearLocation = petsNearLocation;

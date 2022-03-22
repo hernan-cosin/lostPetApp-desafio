@@ -9,7 +9,7 @@ exports.Pet = Pet;
 Pet.init({
     name: sequelize_1.DataTypes.STRING,
     description: sequelize_1.DataTypes.TEXT,
-    imgUrl: sequelize_1.DataTypes.STRING,
+    imgUrl: sequelize_1.DataTypes.TEXT,
     status: sequelize_1.DataTypes.STRING,
     loc_lat: sequelize_1.DataTypes.FLOAT,
     loc_lng: sequelize_1.DataTypes.FLOAT,

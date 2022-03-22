@@ -17,7 +17,7 @@ exports.SECRET = SECRET;
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
-// Pet.sync({ force: true });
+// Pet.sync({ alter: true });
 app.get("/test", async (req, res) => {
     res.json({ test: true });
 });
@@ -72,6 +72,10 @@ app.post("/pet", user_controller_1.middleware, async (req, res) => {
         throw new Error("Missing some data");
     }
 });
+app.put("/pet", user_controller_1.middleware, async (req, res) => {
+    const result = await (0, pet_controler_1.updatePet)(req.body);
+    res.json(result);
+});
 app.get("/my-pets", user_controller_1.middleware, async (req, res) => {
     try {
         if (req._userInfo.user == false) {
@@ -90,6 +94,10 @@ app.get("/my-pets", user_controller_1.middleware, async (req, res) => {
     catch (e) {
         console.log(e);
     }
+});
+app.get("/pets-near-location", async (req, res) => {
+    const petsNearLocationResponse = await (0, pet_controler_1.petsNearLocation)(req);
+    return res.json({ petsNearLocationResponse });
 });
 app.use(express.static("fe-dist"));
 app.get("*", (req, res) => {
