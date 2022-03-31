@@ -8,7 +8,7 @@ require("dotenv/config");
 const models_1 = require("./models/models");
 const user_controller_1 = require("./controllers/user-controller");
 const pet_controler_1 = require("./controllers/pet-controler");
-// SEQUELIZE SYNC
+// // SEQUELIZE SYNC
 // import { sequelize } from "./lib/sequelize/db";
 // try {
 //   sequelize.sync({ force: true }).then((res) => {
