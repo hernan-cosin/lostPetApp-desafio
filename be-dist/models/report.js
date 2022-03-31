@@ -7,7 +7,7 @@ class Report extends sequelize_1.Model {
 }
 exports.Report = Report;
 Report.init({
-    reporter_name: sequelize_1.DataTypes.STRING,
-    cellphone: sequelize_1.DataTypes.NUMBER,
-    last_seen: sequelize_1.DataTypes.TEXT,
+    reporterName: sequelize_1.DataTypes.STRING,
+    cellphone: sequelize_1.DataTypes.INTEGER,
+    lastSeen: sequelize_1.DataTypes.TEXT,
 }, { sequelize: db_1.sequelize, modelName: "report" });

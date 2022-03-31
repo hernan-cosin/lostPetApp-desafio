@@ -10,5 +10,4 @@ User.init({
     email: sequelize_1.DataTypes.STRING,
     name: sequelize_1.DataTypes.STRING,
     lastName: sequelize_1.DataTypes.STRING,
-    password: sequelize_1.DataTypes.STRING,
 }, { sequelize: db_1.sequelize, modelName: "user" });

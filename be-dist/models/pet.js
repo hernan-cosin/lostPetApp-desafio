@@ -14,4 +14,5 @@ Pet.init({
     loc_lat: sequelize_1.DataTypes.FLOAT,
     loc_lng: sequelize_1.DataTypes.FLOAT,
     petZone: sequelize_1.DataTypes.STRING,
+    deleted: sequelize_1.DataTypes.STRING,
 }, { sequelize: db_1.sequelize, modelName: "pet" });
