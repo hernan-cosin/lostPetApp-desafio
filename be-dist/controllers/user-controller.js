@@ -8,13 +8,16 @@ const jwt = require("jsonwebtoken");
 const index_1 = require("../index");
 const sendgrid_1 = require("../lib/sendgrid");
 const async_1 = require("nanoid/async");
+// crear contraseña provisoria con nanoid
 async function newPass() {
     const newPass = await (0, async_1.nanoid)(10);
     return newPass;
 }
+// encriptar contraseña
 function getSHA256ofString(text) {
     return crypto.createHash("sha256").update(text).digest("hex");
 }
+// chequear si el mail existe en la DB
 async function emailCheck(email) {
     const user = await models_1.User.findAll({
         where: {
@@ -29,6 +32,7 @@ async function emailCheck(email) {
     }
 }
 exports.emailCheck = emailCheck;
+// crear nuevo usuario en la DB
 async function creteUser(userData) {
     try {
         const password = getSHA256ofString(userData.password.toString());
@@ -65,6 +69,7 @@ async function creteUser(userData) {
     }
 }
 exports.creteUser = creteUser;
+// enviar contraseña provisoria
 async function passRestore(userData) {
     try {
         const newPassword = await newPass();
@@ -103,6 +108,7 @@ async function passRestore(userData) {
     }
 }
 exports.passRestore = passRestore;
+// entregar token de autenticación
 async function AuthToken(userData) {
     try {
         const email = userData.email;
@@ -123,6 +129,8 @@ async function AuthToken(userData) {
     }
 }
 exports.AuthToken = AuthToken;
+// function auxiliar
+// actualizar la informacion del modelo User
 async function userUpdate(data) {
     try {
         const updateUser = await models_1.User.update(data, {
@@ -136,6 +144,8 @@ async function userUpdate(data) {
         console.log(e);
     }
 }
+// function auxiliar
+// actualizar la informacion del modelo Auth
 async function authUpdate(data) {
     try {
         const user = await models_1.User.findOne({
@@ -156,6 +166,7 @@ async function authUpdate(data) {
         console.log(e);
     }
 }
+// actualizar informacion del usuario
 async function updateUser(userData) {
     try {
         if (userData.name &&
@@ -186,6 +197,7 @@ async function updateUser(userData) {
     }
 }
 exports.updateUser = updateUser;
+// obtener datos del usuario para mostrarlos
 async function UserInformation(req) {
     if (req._userInfo.user == false) {
         return { Error: "unauthorized" };
@@ -199,6 +211,7 @@ async function UserInformation(req) {
     }
 }
 exports.UserInformation = UserInformation;
+// verificación de autenticación del usuario
 async function middleware(req, res, next) {
     const authorization = req.get("Authorization");
     const verification = jwt.verify(authorization.split(" ")[1], index_1.SECRET);

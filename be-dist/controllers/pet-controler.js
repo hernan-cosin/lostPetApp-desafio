@@ -7,6 +7,9 @@ const models_3 = require("../models/models");
 const cloudinary_1 = require("../lib/cloudinary");
 const algolia_1 = require("../lib/algolia");
 const sendgrid_1 = require("../lib/sendgrid");
+// crear nueva mascota en la DB
+// subir la imagen a cloudinary, obtener la url
+// subir la información a algolia
 async function createPet(petData, userId) {
     if (!petData) {
         throw new Error("User was not provided");
@@ -50,6 +53,9 @@ async function createPet(petData, userId) {
     }
 }
 exports.createPet = createPet;
+// actualizar la información en la DB
+// subir la nueva imagen a cloudinary, obtener la url
+// actualizar la información en algolia
 async function updatePet(petInfo) {
     try {
         // CLOUDINARY
@@ -76,6 +82,7 @@ async function updatePet(petInfo) {
     }
 }
 exports.updatePet = updatePet;
+// obtener todos las mascotas de un usuario
 async function getMyPets(req) {
     try {
         if (req._userInfo.user == false) {
@@ -96,6 +103,7 @@ async function getMyPets(req) {
     }
 }
 exports.getMyPets = getMyPets;
+// obtener las mascotas cercanas a una ubicación en un rango de un Km
 async function petsNearLocation(info) {
     try {
         const lat = info.query.lat;
@@ -127,6 +135,7 @@ async function petsNearLocation(info) {
     }
 }
 exports.petsNearLocation = petsNearLocation;
+// setear mascota como encontrada
 async function setFoundPet(petInfo) {
     try {
         const updatePet = await models_1.Pet.update(petInfo, {
@@ -140,6 +149,7 @@ async function setFoundPet(petInfo) {
     }
 }
 exports.setFoundPet = setFoundPet;
+// setear mascota como encontrada
 async function unpublishPet(petInfo) {
     try {
         // SEQUELIZE
@@ -154,6 +164,7 @@ async function unpublishPet(petInfo) {
     }
 }
 exports.unpublishPet = unpublishPet;
+// volver a setear mascota como perdida
 async function publishAgainPet(petInfo) {
     try {
         // SEQUELIZE
@@ -168,6 +179,7 @@ async function publishAgainPet(petInfo) {
     }
 }
 exports.publishAgainPet = publishAgainPet;
+// crear reporte de mascota en la DB
 async function reportPet(reportInfo, petId) {
     if (!reportInfo) {
         throw new Error("Report info was not provided");
@@ -189,6 +201,7 @@ async function reportPet(reportInfo, petId) {
     }
 }
 exports.reportPet = reportPet;
+// enviar email del reporte al usuario dueño de la mascota
 async function sendEmail(emailInformation) {
     const info = {
         to: emailInformation.to,
