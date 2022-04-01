@@ -1,11 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.middleware = exports.UserInformation = exports.updateUser = exports.AuthToken = exports.creteUser = exports.emailCheck = void 0;
+exports.middleware = exports.UserInformation = exports.updateUser = exports.AuthToken = exports.passRestore = exports.creteUser = exports.emailCheck = void 0;
 const models_1 = require("../models/models");
 const models_2 = require("../models/models");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const index_1 = require("../index");
+const sendgrid_1 = require("../lib/sendgrid");
+const async_1 = require("nanoid/async");
+async function newPass() {
+    const newPass = await (0, async_1.nanoid)(10);
+    return newPass;
+}
 function getSHA256ofString(text) {
     return crypto.createHash("sha256").update(text).digest("hex");
 }
@@ -59,6 +65,44 @@ async function creteUser(userData) {
     }
 }
 exports.creteUser = creteUser;
+async function passRestore(userData) {
+    try {
+        const newPassword = await newPass();
+        const contraseña = getSHA256ofString(newPassword.toString());
+        const updateAuthPass = await models_2.Auth.update({ password: contraseña }, {
+            where: {
+                email: userData.userEmail,
+            },
+        });
+        if (updateAuthPass[0] == 1) {
+            const info = {
+                to: userData.userEmail,
+                from: process.env.EMAIL,
+                subject: `Mascotas perdidas: recuperar contraseña`,
+                html: `
+      <strong>Recuperar contraseña</strong>
+      <p>Hemos generado una contraseña automática para que puedas ingresar a tu cuenta y generar una nueva.</p>
+      <p>Nueva contraseña: ${newPassword}.</p>
+    `,
+            };
+            const response = sendgrid_1.sgMail.send(info).then(() => {
+                return true;
+            }, (error) => {
+                console.error(error);
+                if (error.response) {
+                    console.error(error.response.body);
+                }
+                return false;
+            });
+            return response;
+        }
+    }
+    catch (e) {
+        console.log(e);
+        return false;
+    }
+}
+exports.passRestore = passRestore;
 async function AuthToken(userData) {
     try {
         const email = userData.email;
@@ -86,7 +130,6 @@ async function userUpdate(data) {
                 email: data.email,
             },
         });
-        console.log("UPDATE USER", updateUser);
         return updateUser;
     }
     catch (e) {
@@ -106,7 +149,6 @@ async function authUpdate(data) {
             const updateAuth = await models_2.Auth.update({ password: password }, {
                 where: { userId: userId },
             });
-            console.log("UPDATE AUTH", updateAuth);
             return { updateAuth };
         }
     }
@@ -120,39 +162,17 @@ async function updateUser(userData) {
             userData.lastName &&
             userData.password &&
             userData.password1) {
-            console.log("entro en primero");
             const userUpdateRes = userUpdate(userData);
             const authUpdateRes = authUpdate(userData);
             if (userUpdateRes && authUpdateRes) {
                 return { updatedUserAndAuth: true };
             }
-            // const updateUser = await User.update(userData, {
-            //   where: {
-            //     email: userData.email,
-            //   },
-            // });
-            // const user = await User.findOne({
-            //   where: {
-            //     email: userData.email,
-            //   },
-            // });
-            // const userId = user.get("id");
-            // const password = getSHA256ofString(userData.password.toString()) as any;
-            // const updateAuth = await Auth.update(
-            //   { password: password },
-            //   {
-            //     where: { userId: userId },
-            //   }
-            // );
-            //   return { updateUserAndAuth: true };
         }
         if (userData.password && userData.password1) {
-            console.log("entro en segundo");
             const authUpdateRes = authUpdate(userData);
             return { authUpdate: true };
         }
         if (userData.name || userData.lastName) {
-            console.log("entro en tercero");
             const updateUser = await models_1.User.update(userData, {
                 where: {
                     email: userData.email,
@@ -160,7 +180,6 @@ async function updateUser(userData) {
             });
             return { userUpdate: true };
         }
-        // return { updateUser: updateUser, updateAuth: updateAuth };
     }
     catch (e) {
         console.log(e);

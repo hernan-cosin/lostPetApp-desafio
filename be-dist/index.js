@@ -34,6 +34,10 @@ app.post("/auth", async (req, res) => {
     const response = await (0, user_controller_1.creteUser)(req.body);
     res.json({ response });
 });
+app.put("/pass", async (req, res) => {
+    const passRestoreRes = await (0, user_controller_1.passRestore)(req.body);
+    return res.json({ passRestoreRes });
+});
 app.post("/auth/token", async (req, res) => {
     const result = await (0, user_controller_1.AuthToken)(req.body);
     if (result.verified == true) {
