@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const index_1 = require("../index");
 const sendgrid_1 = require("../lib/sendgrid");
 const async_1 = require("nanoid/async");
+require("dotenv/config");
 async function newPass() {
     const newPass = await (0, async_1.nanoid)(10);
     return newPass;
