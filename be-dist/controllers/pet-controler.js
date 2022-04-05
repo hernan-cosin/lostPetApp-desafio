@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendEmail = exports.reportPet = exports.publishAgainPet = exports.unpublishPet = exports.setFoundPet = exports.petsNearLocation = exports.getMyPets = exports.updatePet = exports.createPet = void 0;
+exports.publishAgainPet = exports.unpublishPet = exports.setFoundPet = exports.petsNearLocation = exports.getMyPets = exports.updatePet = exports.createPet = void 0;
 const models_1 = require("../models/models");
 const models_2 = require("../models/models");
 const models_3 = require("../models/models");
 const cloudinary_1 = require("../lib/cloudinary");
 const algolia_1 = require("../lib/algolia");
-const sendgrid_1 = require("../lib/sendgrid");
 // crear nueva mascota en la DB
 // subir la imagen a cloudinary, obtener la url
 // subir la información a algolia
@@ -179,51 +178,51 @@ async function publishAgainPet(petInfo) {
     }
 }
 exports.publishAgainPet = publishAgainPet;
-// crear reporte de mascota en la DB
-async function reportPet(reportInfo, petId) {
-    if (!reportInfo) {
-        throw new Error("Report info was not provided");
-    }
-    try {
-        const newReport = await models_3.Report.create({
-            reporterName: reportInfo.reporterName,
-            cellphone: reportInfo.cellphone,
-            lastSeen: reportInfo.lastSeen,
-            petId: petId,
-        });
-        if (newReport.get("id")) {
-            return true;
-        }
-    }
-    catch (e) {
-        return false;
-        console.log(e);
-    }
-}
-exports.reportPet = reportPet;
-// enviar email del reporte al usuario dueño de la mascota
-async function sendEmail(emailInformation) {
-    const info = {
-        to: emailInformation.to,
-        from: emailInformation.email,
-        subject: `Mascotas perdidas Reporte de ${emailInformation.petName}`,
-        html: `
-  <strong>Mascotas perdidas Reporte</strong>
-  <p>${emailInformation.reporterNameValue} ha visto a tu mascota reportada, ${emailInformation.petName}.</p>
-  <p>Este es el mensaje sobre donde lo vio: "${emailInformation.lastSeenLocationValue}".</p>
-  <p>Su número de contacto es: ${emailInformation.reporterCelValue}</p>
-  <p>Esperamos que te sea de utilidad la información y te reencuentres pronto con tu mascota.</p>
-`,
-    };
-    const response = sendgrid_1.sgMail.send(info).then(() => {
-        return true;
-    }, (error) => {
-        console.error(error);
-        if (error.response) {
-            console.error(error.response.body);
-        }
-        return false;
-    });
-    return response;
-}
-exports.sendEmail = sendEmail;
+// // crear reporte de mascota en la DB
+// export async function reportPet(reportInfo, petId) {
+//   if (!reportInfo) {
+//     throw new Error("Report info was not provided");
+//   }
+//   try {
+//     const newReport = await Report.create({
+//       reporterName: reportInfo.reporterName,
+//       cellphone: reportInfo.cellphone,
+//       lastSeen: reportInfo.lastSeen,
+//       petId: petId,
+//     });
+//     if (newReport.get("id")) {
+//       return true;
+//     }
+//   } catch (e) {
+//     return false;
+//     console.log(e);
+//   }
+// }
+// // enviar email del reporte al usuario dueño de la mascota
+// export async function sendEmail(emailInformation) {
+//   const info = {
+//     to: emailInformation.to,
+//     from: emailInformation.email,
+//     subject: `Mascotas perdidas Reporte de ${emailInformation.petName}`,
+//     html: `
+//   <strong>Mascotas perdidas Reporte</strong>
+//   <p>${emailInformation.reporterNameValue} ha visto a tu mascota reportada, ${emailInformation.petName}.</p>
+//   <p>Este es el mensaje sobre donde lo vio: "${emailInformation.lastSeenLocationValue}".</p>
+//   <p>Su número de contacto es: ${emailInformation.reporterCelValue}</p>
+//   <p>Esperamos que te sea de utilidad la información y te reencuentres pronto con tu mascota.</p>
+// `,
+//   };
+//   const response = sgMail.send(info).then(
+//     () => {
+//       return true;
+//     },
+//     (error) => {
+//       console.error(error);
+//       if (error.response) {
+//         console.error(error.response.body);
+//       }
+//       return false;
+//     }
+//   );
+//   return response;
+// }

@@ -2,3 +2,5 @@ node_modules
 .env
 .parcel-cache
 dist
+be-dist
+fe-dist

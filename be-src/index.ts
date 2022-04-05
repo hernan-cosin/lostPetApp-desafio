@@ -20,9 +20,8 @@ import {
   setFoundPet,
   unpublishPet,
   publishAgainPet,
-  reportPet,
-  sendEmail,
 } from "./controllers/pet-controler";
+import { reportPet, sendEmail } from "./controllers/report-controller";
 
 // // SEQUELIZE SYNC
 // import { sequelize } from "./lib/sequelize/db";

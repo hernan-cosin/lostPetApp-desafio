@@ -8,6 +8,7 @@ require("dotenv/config");
 const models_1 = require("./models/models");
 const user_controller_1 = require("./controllers/user-controller");
 const pet_controler_1 = require("./controllers/pet-controler");
+const report_controller_1 = require("./controllers/report-controller");
 // // SEQUELIZE SYNC
 // import { sequelize } from "./lib/sequelize/db";
 // try {
@@ -124,7 +125,7 @@ app.post("/create-report", async (req, res) => {
         cellphone,
         lastSeen,
     };
-    const createReportResponse = await (0, pet_controler_1.reportPet)(reportInfo, petId);
+    const createReportResponse = await (0, report_controller_1.reportPet)(reportInfo, petId);
     if (createReportResponse) {
         return res.json({ reportCreated: true });
     }
@@ -133,7 +134,7 @@ app.post("/create-report", async (req, res) => {
     }
 });
 app.post("/send-email", async (req, res) => {
-    const sendEmailController = await (0, pet_controler_1.sendEmail)(req.body);
+    const sendEmailController = await (0, report_controller_1.sendEmail)(req.body);
     return res.json({ sendEmailController });
 });
 app.use(express.static("fe-dist"));
