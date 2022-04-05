@@ -1,5 +1,6 @@
 import { Router } from "../../router";
 import { state } from "../../state";
+import { menuInteraction } from "../../index";
 
 class UserData extends HTMLElement {
   shadowRoot: ShadowRoot;
@@ -9,13 +10,13 @@ class UserData extends HTMLElement {
         if (data.name && data.lastName) {
           this.render();
           this.formHandler(data.name, data.lastName);
-          this.menuinteraction();
+          menuInteraction(this);
         }
       });
     } else {
       this.render();
       this.formHandler();
-      this.menuinteraction();
+      menuInteraction(this);
     }
   }
 
@@ -86,69 +87,6 @@ class UserData extends HTMLElement {
         `;
 
     this.appendChild(style);
-  }
-
-  menuinteraction() {
-    // BOTONES
-    const logoutButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".logout")
-      .shadowRoot.querySelector(".text");
-
-    const myDataButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".data")
-      .shadowRoot.querySelector(".text");
-
-    const myReportedPetsButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".my-reports")
-      .shadowRoot.querySelector(".text");
-
-    const reportPetButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".report")
-      .shadowRoot.querySelector(".text");
-
-    logoutButton.addEventListener("click", () => {
-      state.logout();
-      Router.go("/");
-    });
-
-    // //LISTENERS
-    // LOGOUT
-    const menuOptionButton = [
-      myDataButton,
-      myReportedPetsButton,
-      reportPetButton,
-    ];
-
-    menuOptionButton.forEach((buttonEl) => {
-      buttonEl.addEventListener("click", () => {
-        const token = state.getToken();
-
-        if (!token) {
-          // si no hay token setea el path en el state para ir luego de ingresar y recibir token.
-          if (buttonEl.innerHTML.includes("datos")) {
-            state.setPath("/user-data");
-          }
-          if (buttonEl.innerHTML.includes("mascota")) {
-            state.setPath("/report-pet");
-          }
-          if (buttonEl.innerHTML.includes("mascotas")) {
-            state.setPath("/my-reports");
-          }
-          return Router.go("/signup-in");
-        }
-        // si hay token setea el path en el state y el router redirige hacia el botón seleccionado
-        if (buttonEl.innerHTML.includes("datos")) {
-          state.setPath("/user-data");
-        }
-        if (buttonEl.innerHTML.includes("mascota")) {
-          state.setPath("/report-pet");
-        }
-        if (buttonEl.innerHTML.includes("mascotas")) {
-          state.setPath("/my-reports");
-        }
-        Router.go(state.getState().path);
-      });
-    });
   }
 
   formHandler(name?, lastName?) {

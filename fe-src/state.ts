@@ -197,6 +197,7 @@ const state = {
     state.setState(lastState);
 
     localStorage.setItem("token", lastState.token);
+    localStorage.setItem("account", "");
   },
   getToken() {
     const localToken = localStorage.getItem("token");

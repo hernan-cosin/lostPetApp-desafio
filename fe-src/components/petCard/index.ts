@@ -98,7 +98,6 @@ export function initPetCard() {
 
         .img {
             width: 100%;
-            height: 147px;
             object-fit: cover;
             border-radius: 4px;
             filter: drop-shadow(0px 4px 6px var(--dark));

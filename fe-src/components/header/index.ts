@@ -75,6 +75,7 @@ export function initHeader() {
 
         .catdoglogo {
             display: block;
+            cursor: pointer;
         }
 
         .menu {

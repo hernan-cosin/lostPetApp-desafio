@@ -1,6 +1,7 @@
 import { Router } from "../../router";
 import { Dropzone } from "dropzone";
 import { state } from "../../state";
+import { menuInteraction } from "../../index";
 import mapboxgl from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
@@ -20,7 +21,7 @@ class ReportPetPage extends HTMLElement {
       // si no hay petId en el state se renderiza para crearla
       if (petIdLength == 0) {
         this.render({ edit: false });
-        this.menuInteraction();
+        menuInteraction(this);
         this.formHandler();
         return this.displayMap();
       }
@@ -37,7 +38,7 @@ class ReportPetPage extends HTMLElement {
 
           const status = petInfo.status;
           this.render({ edit: true, status: status });
-          this.menuInteraction();
+          menuInteraction(this);
           this.formHandler(petInfo);
           return this.displayMap([petInfo.loc_lng, petInfo.loc_lat]);
         });
@@ -252,68 +253,6 @@ class ReportPetPage extends HTMLElement {
         `;
       return this.appendChild(style);
     }
-  }
-  menuInteraction() {
-    // BUTTONS
-    const logoutButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".logout")
-      .shadowRoot.querySelector(".text");
-
-    const myDataButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".data")
-      .shadowRoot.querySelector(".text");
-
-    const myReportedPetsButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".my-reports")
-      .shadowRoot.querySelector(".text");
-
-    const reportPetButton = this.querySelector(".header-component")
-      .shadowRoot.querySelector(".report")
-      .shadowRoot.querySelector(".text");
-
-    // LISTENERS
-    // LOGOUT
-    logoutButton.addEventListener("click", () => {
-      state.logout();
-      Router.go("/");
-    });
-
-    const menuOptionButton = [
-      myDataButton,
-      myReportedPetsButton,
-      reportPetButton,
-    ];
-
-    menuOptionButton.forEach((buttonEl) => {
-      buttonEl.addEventListener("click", () => {
-        const token = state.getToken();
-
-        if (!token) {
-          // si no hay token setea el path en el state para ir luego de ingresar y recibir token.
-          if (buttonEl.innerHTML.includes("datos")) {
-            state.setPath("/user-data");
-          }
-          if (buttonEl.innerHTML.includes("mascota")) {
-            state.setPath("/report-pet");
-          }
-          if (buttonEl.innerHTML.includes("mascotas")) {
-            state.setPath("/my-reports");
-          }
-          return Router.go("/signup-in");
-        }
-        // si hay token setea el path en el state y el router redirige hacia el botón seleccionado
-        if (buttonEl.innerHTML.includes("datos")) {
-          state.setPath("/user-data");
-        }
-        if (buttonEl.innerHTML.includes("mascota")) {
-          state.setPath("/report-pet");
-        }
-        if (buttonEl.innerHTML.includes("mascotas")) {
-          state.setPath("/my-reports");
-        }
-        Router.go(state.getState().path);
-      });
-    });
   }
   formHandler(petInfo?) {
     const form = this.querySelector(".form");
