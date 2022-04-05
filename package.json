@@ -11,6 +11,7 @@
     "build:fe": "parcel build --dist-dir ./fe-dist",
     "build:be": "tsc ",
     "build:dev": "npm run build:fe && npm run build:be",
+    "build": "npm run build:fe && npm run build:be",
     "start": "node ./be-dist"
   },
   "devDependencies": {
