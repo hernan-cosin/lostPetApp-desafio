@@ -28,13 +28,17 @@ var whitelist = [
   "https://dwf-m8-457b3.web.app",
 ];
 var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  // origin: function (origin, callback) {
+  //   if (whitelist.indexOf(origin) !== -1) {
+  //     callback(null, true);
+  //   } else {
+  //     callback(new Error("Not allowed by CORS"));
+  //   }
+  // },
+  origin: [
+    "https://m7-lost-pet-app.herokuapp.com",
+    "https://dwf-m8-457b3.web.app",
+  ],
 };
 
 // // SEQUELIZE SYNC
@@ -52,8 +56,8 @@ const SECRET = process.env.SECRET;
 
 const app = express();
 
-// app.use(cors());
-app.options("*", cors());
+app.use(cors());
+// app.options("*", cors());
 app.use(express.json({ limit: "50mb" }));
 
 app.get("/test", cors(corsOptions), async (req, res) => {
