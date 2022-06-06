@@ -23,10 +23,24 @@ import {
 } from "./controllers/pet-controler";
 import { reportPet, sendEmail } from "./controllers/report-controller";
 
+var whitelist = [
+  "https://m7-lost-pet-app.herokuapp.com",
+  "https://dwf-m8-457b3.web.app",
+];
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
 // // SEQUELIZE SYNC
 // import { sequelize } from "./lib/sequelize/db";
 // try {
-//   sequelize.sync({ force: true }).then((res) => {
+//   Pet.sync({ force: true }).then((res) => {
 //     console.log(res);
 //   });
 // } catch (e) {
@@ -38,29 +52,29 @@ const SECRET = process.env.SECRET;
 
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
-app.get("/test", async (req, res) => {
+app.get("/test", cors(corsOptions), async (req, res) => {
   res.json({ test: true });
 });
 
-app.post("/email-check", async (req, res) => {
+app.post("/email-check", cors(corsOptions), async (req, res) => {
   const response = await emailCheck(req.body.email);
   res.json({ userFound: response });
 });
 
-app.post("/auth", async (req, res) => {
+app.post("/auth", cors(corsOptions), async (req, res) => {
   const response = await creteUser(req.body);
   res.json({ response });
 });
 
-app.put("/pass", async (req, res) => {
+app.put("/pass", cors(corsOptions), async (req, res) => {
   const passRestoreRes = await passRestore(req.body);
   return res.json({ passRestoreRes });
 });
 
-app.post("/auth/token", async (req, res) => {
+app.post("/auth/token", cors(corsOptions), async (req, res) => {
   const result = await AuthToken(req.body);
 
   if (result.verified == true) {
@@ -70,7 +84,7 @@ app.post("/auth/token", async (req, res) => {
   }
 });
 
-app.put("/user", middleware, async (req, res) => {
+app.put("/user", middleware, cors(corsOptions), async (req, res) => {
   const result = await updateUser(req.body);
   res.json(result);
 });
@@ -85,7 +99,7 @@ app.get("/me", middleware, async (req, res) => {
   }
 });
 
-app.post("/pet", middleware, async (req, res) => {
+app.post("/pet", middleware, cors(corsOptions), async (req, res) => {
   try {
     const userId = req._userInfo.id;
 
@@ -97,12 +111,12 @@ app.post("/pet", middleware, async (req, res) => {
   }
 });
 
-app.put("/pet", middleware, async (req, res) => {
+app.put("/pet", middleware, cors(corsOptions), async (req, res) => {
   const result = await updatePet(req.body);
   res.json(result);
 });
 
-app.get("/my-pets", middleware, async (req, res) => {
+app.get("/my-pets", middleware, cors(corsOptions), async (req, res) => {
   const myPets = await getMyPets(req);
 
   if (myPets.Error == "unauthorized") {
@@ -112,13 +126,13 @@ app.get("/my-pets", middleware, async (req, res) => {
   }
 });
 
-app.get("/pets-near-location", async (req, res) => {
+app.get("/pets-near-location", cors(corsOptions), async (req, res) => {
   const petsNearLocationResponse = await petsNearLocation(req);
 
   return res.json({ petsNearLocationResponse });
 });
 
-app.put("/pet/found", async (req, res) => {
+app.put("/pet/found", cors(corsOptions), async (req, res) => {
   const setFoundPetResponse = await setFoundPet(req.body);
 
   if (setFoundPetResponse == true) {
@@ -129,7 +143,7 @@ app.put("/pet/found", async (req, res) => {
   }
 });
 
-app.put("/pet/unpublish", async (req, res) => {
+app.put("/pet/unpublish", cors(corsOptions), async (req, res) => {
   const unpublisPetResponse = await unpublishPet(req.body);
 
   if (unpublisPetResponse == true) {
@@ -140,7 +154,7 @@ app.put("/pet/unpublish", async (req, res) => {
   }
 });
 
-app.put("/pet/publish-again", async (req, res) => {
+app.put("/pet/publish-again", cors(corsOptions), async (req, res) => {
   const publishAgainPetResponse = await publishAgainPet(req.body);
 
   if (publishAgainPetResponse == true) {
@@ -151,7 +165,7 @@ app.put("/pet/publish-again", async (req, res) => {
   }
 });
 
-app.post("/create-report", async (req, res) => {
+app.post("/create-report", cors(corsOptions), async (req, res) => {
   const { reporterName } = req.body;
   const { cellphone } = req.body;
   const { lastSeen } = req.body;
@@ -171,7 +185,7 @@ app.post("/create-report", async (req, res) => {
   }
 });
 
-app.post("/send-email", async (req, res) => {
+app.post("/send-email", cors(corsOptions), async (req, res) => {
   const sendEmailController = await sendEmail(req.body);
   return res.json({ sendEmailController });
 });
@@ -183,7 +197,7 @@ app.get("*", (req, res) => {
   res.sendFile(ruta);
 });
 
-app.post("/allusers", async (req, res) => {
+app.post("/allusers", cors(corsOptions), async (req, res) => {
   try {
     const allUsers = await User.findAll();
     res.send(allUsers);
@@ -192,7 +206,7 @@ app.post("/allusers", async (req, res) => {
   }
 });
 
-app.post("/allauth", async (req, res) => {
+app.post("/allauth", cors(corsOptions), async (req, res) => {
   try {
     const allAuth = await Auth.findAll();
     res.send(allAuth);
@@ -201,7 +215,7 @@ app.post("/allauth", async (req, res) => {
   }
 });
 
-app.post("/allpets", async (req, res) => {
+app.post("/allpets", cors(corsOptions), async (req, res) => {
   try {
     const allPets = await Pet.findAll({
       include: {
@@ -214,7 +228,7 @@ app.post("/allpets", async (req, res) => {
   }
 });
 
-app.post("/allreports", async (req, res) => {
+app.post("/allreports", cors(corsOptions), async (req, res) => {
   try {
     const allReports = await Report.findAll({ include: Pet });
     res.send(allReports);

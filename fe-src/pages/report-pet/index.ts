@@ -289,6 +289,8 @@ class ReportPetPage extends HTMLElement {
     });
 
     myDropzone.on("thumbnail", function (file) {
+      // console.log(file.dataURL);
+
       // usando este evento pueden acceder al dataURL directamente
       imgContainer.src = file.dataURL;
       state.setUrlImg(file.dataURL);
