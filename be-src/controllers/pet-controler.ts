@@ -118,7 +118,7 @@ export async function petsNearLocation(info) {
     const pets = index
       .search("", {
         aroundLatLng: location,
-        aroundRadius: 1000,
+        aroundRadius: 3000,
       })
       .then(async ({ hits }) => {
         // SEQUELIZE
