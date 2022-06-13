@@ -53,7 +53,7 @@ const SECRET = process.env.SECRET;
 
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 // app.options("*", cors());
 app.use(express.json({ limit: "50mb" }));
 
