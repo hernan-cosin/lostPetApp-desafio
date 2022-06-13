@@ -23,10 +23,6 @@ import {
 } from "./controllers/pet-controler";
 import { reportPet, sendEmail } from "./controllers/report-controller";
 
-var whitelist = [
-  "https://m7-lost-pet-app.herokuapp.com",
-  "https://dwf-m8-457b3.web.app",
-];
 var corsOptions = {
   // origin: function (origin, callback) {
   //   if (whitelist.indexOf(origin) !== -1) {
@@ -38,6 +34,7 @@ var corsOptions = {
   origin: [
     "https://m7-lost-pet-app.herokuapp.com",
     "https://dwf-m8-457b3.web.app",
+    "https://dwf-m8-457b3.firebaseapp.com",
   ],
 };
 
